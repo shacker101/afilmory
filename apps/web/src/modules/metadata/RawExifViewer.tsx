@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { ExifToolManager } from '~/lib/exiftool'
+import { signS3Request } from '~/lib/s3-signer'
 import type { PhotoManifest } from '~/types/photo'
 
 interface RawExifViewerProps {
@@ -300,7 +301,8 @@ export const RawExifViewer: React.FC<RawExifViewerProps> = ({ currentPhoto }) =>
 
     setIsLoading(true)
     try {
-      const response = await fetch(currentPhoto.originalUrl)
+      const { url: signedUrl, headers } = await signS3Request(currentPhoto.originalUrl)
+      const response = await fetch(signedUrl, headers ? { headers } : undefined)
       const blob = await response.blob()
       const data = await ExifToolManager.parse(blob, currentPhoto.s3Key)
 

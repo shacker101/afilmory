@@ -24,6 +24,15 @@ declare global {
   const __MANIFEST__: AfilmoryManifest
   const __SITE_CONFIG__: Partial<SiteConfig>
 
+  const __S3_CONFIG__: {
+    region: string
+    endpoint: string
+    bucket: string
+    accessKeyId: string
+    secretAccessKey: string
+    customDomain: string
+  }
+
   const __CONFIG__: InjectConfig
   /**
    * This function is a macro, will replace in the build stage.

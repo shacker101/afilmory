@@ -5,6 +5,7 @@ import { imageConverterManager } from '~/lib/image-convert'
 import { jotaiStore } from '~/lib/jotai'
 import { LRUCache } from '~/lib/lru-cache'
 import { extractMotionPhotoVideo } from '~/lib/motion-photo-extractor'
+import { signS3Request } from '~/lib/s3-signer'
 import { convertMovToMp4, needsVideoConversion } from '~/lib/video-converter'
 import type { VideoSource } from '~/modules/viewer/types'
 
@@ -113,9 +114,15 @@ export class ImageLoaderManager {
 
     return new Promise((resolve, reject) => {
       this.delayTimer = setTimeout(async () => {
+        const { url, headers } = await signS3Request(src)
         const xhr = new XMLHttpRequest()
-        xhr.open('GET', src)
+        xhr.open('GET', url)
         xhr.responseType = 'blob'
+        if (headers) {
+          for (const [key, value] of Object.entries(headers)) {
+            xhr.setRequestHeader(key, value)
+          }
+        }
 
         xhr.onload = async () => {
           if (xhr.status === 200) {

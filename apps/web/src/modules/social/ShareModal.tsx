@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { injectConfig, siteConfig } from '~/config'
+import { signS3Request } from '~/lib/s3-signer'
 import type { PhotoManifest } from '~/types/photo'
 
 import { CopyButton } from './CopyButton'
@@ -298,7 +299,8 @@ const ShareSheet: ModalComponent<ShareSheetProps> = ({ photo, blobSrc, dismiss }
 ShareSheet.contentClassName = 'max-w-3xl w-full z-1000000'
 
 async function downloadFile(url: string, filename: string) {
-  const response = await fetch(url)
+  const { url: signedUrl, headers } = await signS3Request(url)
+  const response = await fetch(signedUrl, headers ? { headers } : undefined)
   if (!response.ok) {
     throw new Error('Unable to download file')
   }
@@ -316,7 +318,8 @@ async function downloadFile(url: string, filename: string) {
 async function buildShareFiles(photo: PhotoManifest, blobSrc?: string) {
   const imageUrl = blobSrc || photo.originalUrl
   try {
-    const response = await fetch(imageUrl)
+    const { url: signedUrl, headers } = await signS3Request(imageUrl)
+    const response = await fetch(signedUrl, headers ? { headers } : undefined)
     const blob = await response.blob()
     return [new File([blob], `${photo.title || photo.id}.jpg`, { type: blob.type || 'image/jpeg' })]
   }
