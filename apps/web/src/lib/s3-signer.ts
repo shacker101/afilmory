@@ -93,8 +93,8 @@ export async function signS3GetRequest(url: string, config: S3Config): Promise<S
 
   const canonicalUri = canonicalizePath(parsedUrl.pathname)
   const canonicalQuery = buildCanonicalQuery(parsedUrl.searchParams)
-  const canonicalHeaders = `host:${host}\n`
-  const signedHeaders = 'host'
+  const canonicalHeaders = `host:${host}\nx-amz-content-sha256:${EMPTY_HASH}\nx-amz-date:${amzDate}\n`
+  const signedHeaders = 'host;x-amz-content-sha256;x-amz-date'
 
   const canonicalRequest = `GET\n${canonicalUri}\n${canonicalQuery}\n${canonicalHeaders}\n${signedHeaders}\n${EMPTY_HASH}`
   const credentialScope = `${dateStamp}/${config.region}/${service}/aws4_request`
