@@ -15,16 +15,25 @@ function buf2hex(buf: ArrayBuffer): string {
     .join('')
 }
 
-function strToBytes(s: string): Uint8Array {
-  return new TextEncoder().encode(s)
+function toBufferSource(data: Uint8Array<ArrayBufferLike>): Uint8Array<ArrayBuffer> {
+  if (data.buffer instanceof ArrayBuffer && data.byteOffset === 0 && data.byteLength === data.buffer.byteLength) {
+    return data as unknown as Uint8Array<ArrayBuffer>
+  }
+  const ab = new ArrayBuffer(data.byteLength)
+  new Uint8Array(ab).set(data)
+  return new Uint8Array(ab)
 }
 
-async function hashSha256(data: Uint8Array): Promise<string> {
+function strToBytes(s: string): Uint8Array<ArrayBuffer> {
+  return toBufferSource(new TextEncoder().encode(s))
+}
+
+async function hashSha256(data: Uint8Array<ArrayBuffer>): Promise<string> {
   const hash = await crypto.subtle.digest('SHA-256', data)
   return buf2hex(hash)
 }
 
-async function hmacSha256(keyBytes: Uint8Array, data: Uint8Array): Promise<Uint8Array> {
+async function hmacSha256(keyBytes: Uint8Array<ArrayBuffer>, data: Uint8Array<ArrayBuffer>): Promise<Uint8Array<ArrayBuffer>> {
   const key = await crypto.subtle.importKey('raw', keyBytes, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'])
   const sig = await crypto.subtle.sign('HMAC', key, data)
   return new Uint8Array(sig)
@@ -35,7 +44,7 @@ async function deriveSigningKey(
   secretAccessKey: string,
   region: string,
   service: string,
-): Promise<Uint8Array> {
+): Promise<Uint8Array<ArrayBuffer>> {
   const kDate = await hmacSha256(strToBytes(`AWS4${secretAccessKey}`), strToBytes(dateStamp))
   const kRegion = await hmacSha256(kDate, strToBytes(region))
   const kService = await hmacSha256(kRegion, strToBytes(service))
