@@ -77,6 +77,7 @@ function buildCanonicalQuery(params: URLSearchParams): string {
 }
 
 export interface SignedHeaders {
+  [key: string]: string
   authorization: string
   'x-amz-content-sha256': string
   'x-amz-date': string
@@ -99,7 +100,7 @@ export async function signS3GetRequest(url: string, config: S3Config): Promise<S
   const credentialScope = `${dateStamp}/${config.region}/${service}/aws4_request`
   const stringToSign = `AWS4-HMAC-SHA256\n${amzDate}\n${credentialScope}\n${await hashSha256(strToBytes(canonicalRequest))}`
   const signingKey = await deriveSigningKey(dateStamp, config.secretAccessKey, config.region, service)
-  const signature = buf2hex(await hmacSha256(signingKey, strToBytes(stringToSign)))
+  const signature = buf2hex((await hmacSha256(signingKey, strToBytes(stringToSign))).buffer)
   const authorization = `AWS4-HMAC-SHA256 Credential=${config.accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`
 
   return {
