@@ -79,7 +79,7 @@ const createAndInsertOpenGraphMeta = (document: OnlyHTMLDocument, photo: PhotoMa
     'og:type': 'website',
     'og:title': `${photo.id} on ${siteConfig.title}`,
     'og:description': photo.description || '',
-    'og:image': `${realOrigin}/og/${photo.id}`,
+    'og:image': `${realOrigin}/thumbnails/${photo.id}.jpg`,
     'og:url': `${realOrigin}/${photo.id}`,
   }
 
@@ -95,7 +95,7 @@ const createAndInsertOpenGraphMeta = (document: OnlyHTMLDocument, photo: PhotoMa
     'twitter:card': 'summary_large_image',
     'twitter:title': `${photo.id} on ${siteConfig.title}`,
     'twitter:description': photo.description || '',
-    'twitter:image': `${realOrigin}/og/${photo.id}`,
+    'twitter:image': `${realOrigin}/thumbnails/${photo.id}.jpg`,
   }
 
   for (const [name, content] of Object.entries(twitterTags)) {
