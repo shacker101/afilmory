@@ -47,3 +47,4 @@ allowBuilds:
   libpq: false
   sharp: true
   simple-git-hooks: true
+  workerd: true
