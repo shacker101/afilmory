@@ -23,6 +23,7 @@
     "@afilmory/sdk": "workspace:*",
     "@afilmory/ui": "workspace:*",
     "@afilmory/utils": "workspace:*",
+    "@opennextjs/cloudflare": "1.20.2",
     "@t3-oss/env-nextjs": "0.13.11",
     "clsx": "2.1.1",
     "drizzle-orm": "0.45.2",
