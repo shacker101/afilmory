@@ -1,0 +1,8 @@
+{
+  "name": "afilmory",
+  "compatibility_date": "2025-07-27",
+  "compatibility_flags": [
+	"nodejs_compat"
+  ],
+  "main": ".open-next/worker.js"
+}
