@@ -11,6 +11,7 @@
     "build": "sh scripts/build.sh",
     "build:jpg": "node scripts/webp-to-jpg.js",
     "build:next": "next build",
+    "build:cloudflare": "opennextjs-cloudflare build",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "dev": "concurrently \"pnpm run dev:web\" \"pnpm run dev:next\"",
