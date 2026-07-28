@@ -74,12 +74,16 @@ const createAndInsertOpenGraphMeta = (document: OnlyHTMLDocument, photo: PhotoMa
   if (xForwardedHeaders['x-forwarded-host']) {
     realOrigin = `${xForwardedHeaders['x-forwarded-proto'] || 'https'}://${xForwardedHeaders['x-forwarded-host']}`
   }
+  
+  const ogImageUrl = photo.thumbnailUrl?.startsWith('http')
+    ? photo.thumbnailUrl
+    : `${realOrigin}/og/${photo.id}`
 
   const ogTags = {
     'og:type': 'website',
     'og:title': `${photo.id} on ${siteConfig.title}`,
     'og:description': photo.description || '',
-    'og:image': `${realOrigin}/thumbnails/${photo.id}.jpg`,
+    'og:image': ogImageUrl,
     'og:url': `${realOrigin}/${photo.id}`,
   }
 
@@ -95,7 +99,7 @@ const createAndInsertOpenGraphMeta = (document: OnlyHTMLDocument, photo: PhotoMa
     'twitter:card': 'summary_large_image',
     'twitter:title': `${photo.id} on ${siteConfig.title}`,
     'twitter:description': photo.description || '',
-    'twitter:image': `${realOrigin}/thumbnails/${photo.id}.jpg`,
+    'twitter:image': ogImageUrl,
   }
 
   for (const [name, content] of Object.entries(twitterTags)) {
